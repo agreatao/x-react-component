@@ -192,6 +192,7 @@ class Image extends React.Component<ImageProps, ImageState> {
     }
     moveLeft(step?: number) {
         const { dragable } = this.props;
+        const { error } = this.state;
         if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
@@ -207,6 +208,7 @@ class Image extends React.Component<ImageProps, ImageState> {
     }
     moveRight(step?: number) {
         const { dragable } = this.props;
+        const { error } = this.state;
         if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
@@ -222,6 +224,7 @@ class Image extends React.Component<ImageProps, ImageState> {
     }
     moveTop(step?: number) {
         const { dragable } = this.props;
+        const { error } = this.state;
         if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
@@ -237,6 +240,7 @@ class Image extends React.Component<ImageProps, ImageState> {
     }
     moveBottom(step?: number) {
         const { dragable } = this.props;
+        const { error } = this.state;
         if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
