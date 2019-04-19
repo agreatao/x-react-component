@@ -1,3 +1,6 @@
+/**
+ * 图片组件
+ */
 
 import * as React from "react";
 import addDomEventListener from '../utils/addDomEventListener';
@@ -20,6 +23,7 @@ export interface ImageProps {
     onMouseLeave?: (target: any, e: MouseEvent) => any;
     onZoomChange?: (zoom: number) => any;
     refs?: (refs: object) => any;
+    onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => any;
 }
 
 interface ImageState {
@@ -187,6 +191,8 @@ class Image extends React.Component<ImageProps, ImageState> {
         onZoomChange && onZoomChange(1);
     }
     moveLeft(step?: number) {
+        const { dragable } = this.props;
+        if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
         let wrapperWidth = wrapper.style.width && (typeof wrapper.style.width === 'string' ? parseFloat(wrapper.style.width) : wrapper.style.width) || 0,
@@ -200,6 +206,8 @@ class Image extends React.Component<ImageProps, ImageState> {
         image.style.left = curLeft + 'px';
     }
     moveRight(step?: number) {
+        const { dragable } = this.props;
+        if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
         let wrapperWidth = wrapper.style.width && (typeof wrapper.style.width === 'string' ? parseFloat(wrapper.style.width) : wrapper.style.width) || 0,
@@ -213,6 +221,8 @@ class Image extends React.Component<ImageProps, ImageState> {
         image.style.left = curLeft + 'px';
     }
     moveTop(step?: number) {
+        const { dragable } = this.props;
+        if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
         let wrapperHeight = wrapper.style.height && (typeof wrapper.style.height === 'string' ? parseFloat(wrapper.style.height) : wrapper.style.height) || 0,
@@ -226,12 +236,14 @@ class Image extends React.Component<ImageProps, ImageState> {
         image.style.top = curTop + 'px';
     }
     moveBottom(step?: number) {
+        const { dragable } = this.props;
+        if(!dragable || error) return;
         step = step ? Math.abs(step) : 0.01;
         const { wrapper, image } = this.refs;
         let wrapperHeight = wrapper.style.height && (typeof wrapper.style.height === 'string' ? parseFloat(wrapper.style.height) : wrapper.style.height) || 0,
             imageHeight = image.style.height && (typeof image.style.height === 'string' ? parseFloat(image.style.height) : image.style.height) || 0,
             imageTop = image.style.top && (typeof image.style.top === 'string' ? parseFloat(image.style.top) : image.style.top) || 0;
-        let max_top = wrapperHeight + imageHeight;
+        let max_top = wrapperHeight - imageHeight;
         let min_top = Math.min(max_top, 0);
         max_top = Math.max(0, max_top);
         let curTop = imageTop + this.container_height * step;
@@ -450,6 +462,7 @@ class Image extends React.Component<ImageProps, ImageState> {
         const { src, className, style, children } = this.props;
         return (
             <div
+                onClick={this.props.onClick}
                 ref="wrapper"
                 className={className}
                 style={{ ...style, position: 'relative', boxSizing: 'content-box', overflow: 'hidden' }}>
@@ -458,7 +471,7 @@ class Image extends React.Component<ImageProps, ImageState> {
                 }}>
                     {!error && (
                         <img
-                            style={{ position: 'relative', zIndex: 1, visibility: 'hidden' }}
+                            style={{ position: 'relative', zIndex: 1, visibility: 'hidden', userSelect: 'none' }}
                             ref="img"
                             src={src}
                             onLoad={this.onLoad.bind(this)}
