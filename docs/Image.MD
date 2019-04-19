@@ -78,5 +78,9 @@ import { Image } from 'x-react-component';
 | zoomOut     |                                缩小                                 | ```function(step?)``` |
 | zoomSuit    | 设定组件的```width```和```height```时，可以使图片放大缩小到容器大小 |      ```function()``` |
 | zoomDefault |                     图片不缩放，以实际大小显示                      |      ```function()``` |
+| moveTop     |                                上移                                 | ```function(step?)``` |
+| moveBottom  |                                下移                                 | ```function(step?)``` |
+| moveLeft    |                                左移                                 | ```function(step?)``` |
+| moveRight   |                                右移                                 | ```function(step?)``` |
 
 ```step``` 为放大倍数，默认```0.1```

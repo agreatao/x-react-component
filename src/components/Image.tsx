@@ -31,6 +31,10 @@ export interface ImageRefProps {
     zoomOut: (step?: number) => any;
     zoomSuit: () => any;
     zoomDefault: () => any;
+    moveLeft: (step?: number) => any;
+    moveRight: (step?: number) => any;
+    moveTop: (step?: number) => any;
+    moveBottom: (step?: number) => any;
 }
 
 export interface ImageMouseTarget {
@@ -168,12 +172,12 @@ class Image extends React.Component<ImageProps, ImageState> {
         step = step ? Math.abs(step) : 0.1;
         this.zoomChange(step, this.container_width / 2, this.container_height / 2);
     }
-    suitZoom() {
+    zoomSuit() {
         const { error } = this.state;
         if (error) return;
         this.resizeImage(this.refs.img, this.props);
     }
-    defaultZoom() {
+    zoomDefault() {
         const { image } = this.refs;
         image.style.width = this.image_width + 'px';
         image.style.height = this.image_height + 'px';
@@ -181,6 +185,58 @@ class Image extends React.Component<ImageProps, ImageState> {
         image.style.top = (this.container_height - this.image_height) / 2 + 'px';
         const { onZoomChange } = this.props;
         onZoomChange && onZoomChange(1);
+    }
+    moveLeft(step?: number) {
+        step = step ? Math.abs(step) : 0.01;
+        const { wrapper, image } = this.refs;
+        let wrapperWidth = wrapper.style.width && (typeof wrapper.style.width === 'string' ? parseFloat(wrapper.style.width) : wrapper.style.width) || 0,
+            imageWidth = image.style.width && (typeof image.style.width === 'string' ? parseFloat(image.style.width) : image.style.width) || 0,
+            imageLeft = image.style.left && (typeof image.style.left === 'string' ? parseFloat(image.style.left) : image.style.left) || 0;
+        let max_left = wrapperWidth - imageWidth;
+        let min_left = Math.min(max_left, 0);
+        max_left = Math.max(0, max_left);
+        let curLeft = imageLeft - this.container_width * step;
+        curLeft = Math.min(Math.max(min_left, curLeft), max_left);
+        image.style.left = curLeft + 'px';
+    }
+    moveRight(step?: number) {
+        step = step ? Math.abs(step) : 0.01;
+        const { wrapper, image } = this.refs;
+        let wrapperWidth = wrapper.style.width && (typeof wrapper.style.width === 'string' ? parseFloat(wrapper.style.width) : wrapper.style.width) || 0,
+            imageWidth = image.style.width && (typeof image.style.width === 'string' ? parseFloat(image.style.width) : image.style.width) || 0,
+            imageLeft = image.style.left && (typeof image.style.left === 'string' ? parseFloat(image.style.left) : image.style.left) || 0;
+        let max_left = wrapperWidth - imageWidth;
+        let min_left = Math.min(max_left, 0);
+        max_left = Math.max(0, max_left);
+        let curLeft = imageLeft + this.container_width * step;
+        curLeft = Math.min(Math.max(min_left, curLeft), max_left);
+        image.style.left = curLeft + 'px';
+    }
+    moveTop(step?: number) {
+        step = step ? Math.abs(step) : 0.01;
+        const { wrapper, image } = this.refs;
+        let wrapperHeight = wrapper.style.height && (typeof wrapper.style.height === 'string' ? parseFloat(wrapper.style.height) : wrapper.style.height) || 0,
+            imageHeight = image.style.height && (typeof image.style.height === 'string' ? parseFloat(image.style.height) : image.style.height) || 0,
+            imageTop = image.style.top && (typeof image.style.top === 'string' ? parseFloat(image.style.top) : image.style.top) || 0;
+        let max_top = wrapperHeight - imageHeight;
+        let min_top = Math.min(max_top, 0);
+        max_top = Math.max(0, max_top);
+        let curTop = imageTop - this.container_height * step;
+        curTop = Math.min(Math.max(min_top, curTop), max_top);
+        image.style.top = curTop + 'px';
+    }
+    moveBottom(step?: number) {
+        step = step ? Math.abs(step) : 0.01;
+        const { wrapper, image } = this.refs;
+        let wrapperHeight = wrapper.style.height && (typeof wrapper.style.height === 'string' ? parseFloat(wrapper.style.height) : wrapper.style.height) || 0,
+            imageHeight = image.style.height && (typeof image.style.height === 'string' ? parseFloat(image.style.height) : image.style.height) || 0,
+            imageTop = image.style.top && (typeof image.style.top === 'string' ? parseFloat(image.style.top) : image.style.top) || 0;
+        let max_top = wrapperHeight + imageHeight;
+        let min_top = Math.min(max_top, 0);
+        max_top = Math.max(0, max_top);
+        let curTop = imageTop + this.container_height * step;
+        curTop = Math.min(Math.max(min_top, curTop), max_top);
+        image.style.top = curTop + 'px';
     }
     constructor(props: ImageProps) {
         super(props);
@@ -203,8 +259,12 @@ class Image extends React.Component<ImageProps, ImageState> {
         let imageRefs: ImageRefProps = {
             zoomIn: (step) => this.zoomIn(step),
             zoomOut: (step) => this.zoomOut(step),
-            zoomSuit: () => this.suitZoom(),
-            zoomDefault: () => this.defaultZoom()
+            zoomSuit: () => this.zoomSuit(),
+            zoomDefault: () => this.zoomDefault(),
+            moveLeft: (step) => this.moveLeft(step),
+            moveRight: (step) => this.moveRight(step),
+            moveTop: (step) => this.moveTop(step),
+            moveBottom: (step) => this.moveBottom(step)
         }
         this.props.refs && this.props.refs(imageRefs)
     }
