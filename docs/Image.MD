@@ -28,8 +28,8 @@ import { Image } from "x-react-component";
 | style        |     样式（css 样式）     |                   `object` |        |
 | border       |     样式（css 样式）     |                  `boolean` |  false |
 | inline       |     样式（css 样式）     |                  `boolean` |  false |
-| zoom         |        是否可缩放        |         `boolean | object` |  false |
-| move         |      是否可拖拽移动      |         `boolean | object` |  false |
+| zoom         |        是否可缩放        |         ```boolean | object``` |  false |
+| move         |      是否可拖拽移动      |         ````boolean | object``` |  false |
 | refs         |       图片容器实例       |          `function(image)` |        |
 | onZoomChange | 鼠标缩放时触发的回调时间 |           `function(zoom)` |        |
 | onMouseDown  |  图片鼠标按下时回调事件  | `function(eventTarget, e)` |        |
@@ -45,20 +45,22 @@ import { Image } from "x-react-component";
 当设置其中之一时，按照宽高比 `3 : 4` 计算位置边的大小
 
 `zoom` 的 `object` 属性如下：
-| 属性 | 说明 | 类型 | 默认值 |
-| ------- | :----------: | ---------: | -----: |
-| enable | 是否可以缩放 | `boolean` | |
-| minWidth | 缩放最小宽度 | `number` | |
-| minHeight | 缩放最小高度 | `number` | |
-| maxWidth | 缩放最大宽度 | `number` | |
-| minHeight | 缩放最大高度 | `number` | |
+
+| 属性      |     说明     |      类型 | 默认值 |
+| --------- | :----------: | --------: | -----: |
+| enable    | 是否可以缩放 | `boolean` |        |
+| minWidth  | 缩放最小宽度 |  `number` |        |
+| minHeight | 缩放最小高度 |  `number` |        |
+| maxWidth  | 缩放最大宽度 |  `number` |        |
+| minHeight | 缩放最大高度 |  `number` |        |
 
 如果`zoom`为`boolean`值，或者没有设置最小，最大宽度高度等信息时，默认最小/最大缩放比例时 5 倍
 
 `move` 的 `object` 属性如下：
-| 属性 | 说明 | 类型 | 默认值 |
-| ------ | :--------: | --------: | -----: |
-| enable | 是否可以移动 | `boolean` | |
+
+| 属性   |     说明     |      类型 | 默认值 |
+| ------ | :----------: | --------: | -----: |
+| enable | 是否可以移动 | `boolean` |        |
 
 回调事件中的`eventTarget`属性包含以下属性：
 
