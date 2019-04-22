@@ -343,11 +343,11 @@ class Image extends React.Component<ImageProp, ImageState> {
         showLeft =
             showLeft -
             (showWidth - currentWidth) / 2 -
-            (currentWidth / 2 - offsetX);
+            (currentWidth / 2 - offsetX) + (showWidth / 2 - offsetX / currentWidth * showWidth);
         showTop =
             showTop -
             (showHeight - currentHeight) / 2 -
-            (currentHeight / 2 - offsetY);
+            (currentHeight / 2 - offsetY) + (showHeight / 2 - offsetY / currentHeight * showHeight);
 
         showLeft = Math.max(this.minLeft, Math.min(this.maxLeft, showLeft));
         showTop = Math.max(this.minTop, Math.min(this.maxTop, showTop));
@@ -376,6 +376,8 @@ class Image extends React.Component<ImageProp, ImageState> {
     }
 
     zoomSuit() {
+        const { error } = this.state;
+        if (!Image.canZoom(this.props) || error) return;
         const {
             containerWidth,
             containerHeight,
@@ -395,6 +397,8 @@ class Image extends React.Component<ImageProp, ImageState> {
     }
 
     zoomDefault() {
+        const { error } = this.state;
+        if (!Image.canZoom(this.props) || error) return;
         const {
             containerWidth,
             containerHeight,
@@ -647,8 +651,10 @@ class Image extends React.Component<ImageProp, ImageState> {
     wheelHandler(e: React.WheelEvent<HTMLDivElement>) {
         const { showWidth, showHeight } = this.state;
         const { offsetX, offsetY } = Image.getMouseOffset(e);
+        let step = e.deltaY;
+        step = step / (Math.abs(step) > 100 ? 10000 : Math.abs(step) > 100 ? 100 : Math.abs(step) > 1 ? 100 : 10);
         this.zoom(
-            -e.deltaY,
+            -step,
             Image.canMove(this.props) ? offsetX : showWidth / 2,
             Image.canMove(this.props) ? offsetY : showHeight / 2
         );
@@ -708,15 +714,15 @@ class Image extends React.Component<ImageProp, ImageState> {
                             style={
                                 loaded
                                     ? {
-                                          width: "100%",
-                                          height: "100%",
-                                          visibility: "visible"
-                                      }
+                                        width: "100%",
+                                        height: "100%",
+                                        visibility: "visible"
+                                    }
                                     : {
-                                          width: "auto",
-                                          height: "auto",
-                                          visibility: "hidden"
-                                      }
+                                        width: "auto",
+                                        height: "auto",
+                                        visibility: "hidden"
+                                    }
                             }
                             src={src}
                             onLoad={this.imageLoadHandler.bind(this)}
