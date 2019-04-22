@@ -44,8 +44,6 @@ export interface ImageProp {
     height?: number;
     className?: string;
     style?: React.CSSProperties;
-    border?: boolean;
-    inline?: boolean;
     move?: boolean | MoveProp;
     zoom?: boolean | ZoomProp;
     refs?: (image: ImageRef) => any;
@@ -128,7 +126,7 @@ class Image extends React.Component<ImageProp, ImageState> {
         suit?: boolean,
         biggerSuit?: boolean
     ): ImageState {
-        const { width, height, border, radio } = props;
+        const { width, height, radio } = props;
         let containerWidth = 0,
             containerHeight = 0,
             showWidth = imageWidth,
@@ -143,8 +141,6 @@ class Image extends React.Component<ImageProp, ImageState> {
         containerHeight =
             height || (width && width / (radio ? radio : 0.75)) || imageHeight;
 
-        containerWidth = containerWidth - (border ? 2 : 0);
-        containerHeight = containerHeight - (border ? 2 : 0);
         let _radio = (containerHeight && containerWidth / containerHeight) || 0;
 
         if (
@@ -212,8 +208,6 @@ class Image extends React.Component<ImageProp, ImageState> {
     private documentMouseMove: DomEventListener | null;
 
     static defaultProps = {
-        inline: false,
-        border: false,
         move: false,
         zoom: false
     };
@@ -641,6 +635,7 @@ class Image extends React.Component<ImageProp, ImageState> {
     }
 
     wheelHandler(e: React.WheelEvent<HTMLDivElement>) {
+        e.preventDefault();
         const { showWidth, showHeight } = this.state;
         const { offsetX, offsetY } = Image.getMouseOffset(e);
         let step = e.deltaY;
@@ -652,8 +647,13 @@ class Image extends React.Component<ImageProp, ImageState> {
         );
     }
 
+    onClickHandler(e: React.MouseEvent<HTMLDivElement>) {
+        e.preventDefault();
+        this.props.onClick && this.props.onClick(e);
+    }
+
     render() {
-        const { src, children, border, inline, className, style } = this.props;
+        const { src, children, className, style } = this.props;
         const {
             error,
             loaded,
@@ -669,22 +669,17 @@ class Image extends React.Component<ImageProp, ImageState> {
             <div
                 className={classnames(
                     "xrc-image",
-                    {
-                        "image-border": border
-                    },
                     className
                 )}
                 style={{
                     ...style,
-                    display: inline ? "inline-block" : "block",
                     boxSizing: "content-box",
                     position: "relative",
                     overflow: "hidden",
                     width: containerWidth,
-                    height: containerHeight,
-                    borderWidth: border ? 1 : undefined
+                    height: containerHeight
                 }}
-                onClick={this.props.onClick}
+                onClick={this.onClickHandler.bind(this)}
             >
                 <div
                     style={{

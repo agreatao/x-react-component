@@ -26,8 +26,6 @@ import { Image } from "x-react-component";
 | height       |         容器高度         |                   `number` |        |
 | className    |           类名           |                   `string` |        |
 | style        |     样式（css 样式）     |                   `object` |        |
-| border       |     样式（css 样式）     |                  `boolean` |  false |
-| inline       |     样式（css 样式）     |                  `boolean` |  false |
 | zoom         |        是否可缩放        |         ```boolean | object``` |  false |
 | move         |      是否可拖拽移动      |         ````boolean | object``` |  false |
 | refs         |       图片容器实例       |          `function(image)` |        |
