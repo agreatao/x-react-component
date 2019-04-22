@@ -46,6 +46,7 @@ export interface ImageProp {
     style?: React.CSSProperties;
     move?: boolean | MoveProp;
     zoom?: boolean | ZoomProp;
+    prefixCls?: string;
     refs?: (image: ImageRef) => any;
     onZoomChange?: (zoom: number) => any;
     onMouseDown?: (
@@ -208,6 +209,7 @@ class Image extends React.Component<ImageProp, ImageState> {
     private documentMouseMove: DomEventListener | null;
 
     static defaultProps = {
+        prefixCls: 'xrc',
         move: false,
         zoom: false
     };
@@ -653,7 +655,7 @@ class Image extends React.Component<ImageProp, ImageState> {
     }
 
     render() {
-        const { src, children, className, style } = this.props;
+        const { src, children, className, style, prefixCls } = this.props;
         const {
             error,
             loaded,
@@ -668,9 +670,8 @@ class Image extends React.Component<ImageProp, ImageState> {
         return (
             <div
                 className={classnames(
-                    "xrc-image",
-                    className
-                )}
+                    `${prefixCls}-image`,
+                    className)}
                 style={{
                     ...style,
                     boxSizing: "content-box",
