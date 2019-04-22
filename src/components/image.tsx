@@ -221,13 +221,7 @@ class Image extends React.Component<ImageProp, ImageState> {
     constructor(props: ImageProp) {
         super(props);
 
-        const { zoom } = props;
-        if (typeof zoom === "object") {
-            this.minWidth = (zoom && zoom.minWidth) || 0;
-            this.maxWidth = (zoom && zoom.maxWidth) || 0;
-            this.minHeight = (zoom && zoom.minHeight) || 0;
-            this.maxHeight = (zoom && zoom.maxHeight) || 0;
-        }
+        this.resetZoom();
 
         const {
             containerWidth,
@@ -292,20 +286,18 @@ class Image extends React.Component<ImageProp, ImageState> {
 
     resetZoom() {
         const { zoom } = this.props;
-        if (typeof zoom === "object") {
-            this.minWidth =
-                (typeof zoom === "object" && zoom.minWidth) ||
-                this.imageWidth / 5;
-            this.maxWidth =
-                (typeof zoom === "object" && zoom.maxWidth) ||
-                this.imageWidth * 5;
-            this.minHeight =
-                (typeof zoom === "object" && zoom.minHeight) ||
-                this.imageHeight / 5;
-            this.maxHeight =
-                (typeof zoom === "object" && zoom.maxHeight) ||
-                this.imageHeight * 5;
-        }
+        this.minWidth =
+            (typeof zoom === "object" && zoom.minWidth) ||
+            this.imageWidth / 5;
+        this.maxWidth =
+            (typeof zoom === "object" && zoom.maxWidth) ||
+            this.imageWidth * 5;
+        this.minHeight =
+            (typeof zoom === "object" && zoom.minHeight) ||
+            this.imageHeight / 5;
+        this.maxHeight =
+            (typeof zoom === "object" && zoom.maxHeight) ||
+            this.imageHeight * 5;
     }
 
     zoom(step: number, offsetX: number, offsetY: number) {
