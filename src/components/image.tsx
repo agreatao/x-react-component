@@ -187,6 +187,10 @@ class Image extends React.Component<ImageProp, ImageState> {
         return { offsetX, offsetY };
     }
 
+    refs: {
+        image: HTMLDivElement;
+    }
+
     private imageWidth: number = 0;
     private imageHeight: number = 0;
 
@@ -207,6 +211,12 @@ class Image extends React.Component<ImageProp, ImageState> {
 
     private documentMouseUp: DomEventListener | null;
     private documentMouseMove: DomEventListener | null;
+    private imageMouseDown: DomEventListener | null;
+    private imageMouseMove: DomEventListener | null;
+    private imageMouseUp: DomEventListener | null;
+    private imageMouseEnter: DomEventListener | null;
+    private imageMouseLeave: DomEventListener | null;
+    private imageMouseWheel: DomEventListener | null;
 
     static defaultProps = {
         prefixCls: 'xrc',
@@ -483,6 +493,45 @@ class Image extends React.Component<ImageProp, ImageState> {
             }
         );
 
+        const { image } = this.refs;
+
+        this.imageMouseDown = addDomEventListener(
+            image,
+            "mousedown",
+            this.mouseDownHandler.bind(this)
+        );
+
+        this.imageMouseMove = addDomEventListener(
+            image,
+            "mousemove",
+            this.mouseMoveHandler.bind(this)
+        );
+
+        this.imageMouseUp = addDomEventListener(
+            image,
+            "mouseup",
+            this.mouseUpHandler.bind(this)
+        );
+
+        this.imageMouseEnter = addDomEventListener(
+            image,
+            "mouseenter",
+            this.mouseEnterHandler.bind(this)
+        );
+
+        this.imageMouseLeave = addDomEventListener(
+            image,
+            "mouseleave",
+            this.mouseLeaveHandler.bind(this)
+        );
+
+        this.imageMouseWheel = addDomEventListener(
+            image,
+            "mousewheel",
+            this.mouseWheelHandler.bind(this),
+            { passive: false }
+        );
+
         this.props.refs &&
             this.props.refs({
                 zoomIn: this.zoomIn.bind(this),
@@ -499,6 +548,12 @@ class Image extends React.Component<ImageProp, ImageState> {
     componentWillUnmount() {
         this.documentMouseUp && this.documentMouseUp.remove();
         this.documentMouseMove && this.documentMouseMove.remove();
+        this.imageMouseDown && this.imageMouseDown.remove();
+        this.imageMouseMove && this.imageMouseMove.remove();
+        this.imageMouseUp && this.imageMouseUp.remove();
+        this.imageMouseEnter && this.imageMouseEnter.remove();
+        this.imageMouseLeave && this.imageMouseLeave.remove();
+        this.imageMouseWheel && this.imageMouseWheel.remove();
     }
 
     componentWillReceiveProps(nextProps: ImageProp) {
@@ -636,7 +691,7 @@ class Image extends React.Component<ImageProp, ImageState> {
         this.props.onMouseLeave && this.props.onMouseLeave(eventTarget, e);
     }
 
-    wheelHandler(e: React.WheelEvent<HTMLDivElement>) {
+    mouseWheelHandler(e: React.WheelEvent<HTMLDivElement>) {
         e.preventDefault();
         const { showWidth, showHeight } = this.state;
         const { offsetX, offsetY } = Image.getMouseOffset(e);
@@ -647,6 +702,7 @@ class Image extends React.Component<ImageProp, ImageState> {
             Image.canMove(this.props) ? offsetX : showWidth / 2,
             Image.canMove(this.props) ? offsetY : showHeight / 2
         );
+        return false;
     }
 
     onClickHandler(e: React.MouseEvent<HTMLDivElement>) {
@@ -690,12 +746,7 @@ class Image extends React.Component<ImageProp, ImageState> {
                         top: showTop,
                         left: showLeft
                     }}
-                    onMouseDown={this.mouseDownHandler.bind(this)}
-                    onMouseMove={this.mouseMoveHandler.bind(this)}
-                    onMouseUp={this.mouseUpHandler.bind(this)}
-                    onMouseEnter={this.mouseEnterHandler.bind(this)}
-                    onMouseLeave={this.mouseLeaveHandler.bind(this)}
-                    onWheel={this.wheelHandler.bind(this)}
+                    ref="image"
                 >
                     {!error && (
                         <img
