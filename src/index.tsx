@@ -1,1 +1,7 @@
-export { default as Image } from './components/image';
+import Image from './components/image'; 
+
+export { ImageProps } from './components/image'; 
+
+export {
+    Image
+}

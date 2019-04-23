@@ -1,14 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
 import classnames from "classnames";
-import addDomEventListener, {
-    DomEventListener
-} from "../utils/addDomEventListener";
+import addDomEventListener, { DomEventListener } from "../utils/addDomEventListener";
 
-export interface MoveProp {
+export interface ImageMoveProps {
     enable: boolean;
 }
 
-export interface ZoomProp {
+export interface ImageZoomProps {
     enable: boolean;
     minWidth?: number;
     maxWidth?: number;
@@ -16,7 +15,7 @@ export interface ZoomProp {
     maxHeight?: number;
 }
 
-export interface ImageRef {
+export interface ImageRefs {
     zoomIn: (step?: number) => any;
     zoomOut: (step?: number) => any;
     zoomSuit: () => any;
@@ -37,47 +36,31 @@ export interface ImageEventTarget {
     zoom: number;
 }
 
-export interface ImageProp {
+export interface ImageProps {
     src: string;
     radio?: number;
     width?: number;
     height?: number;
     className?: string;
     style?: React.CSSProperties;
-    move?: boolean | MoveProp;
-    zoom?: boolean | ZoomProp;
+    move?: boolean | ImageMoveProps;
+    zoom?: boolean | ImageZoomProps;
     prefixCls?: string;
-    refs?: (image: ImageRef) => any;
+    refs?: (image: ImageRefs) => any;
     onZoomChange?: (zoom: number) => any;
-    onMouseDown?: (
-        eventTarget: ImageEventTarget,
-        e: React.MouseEvent<HTMLDivElement>
-    ) => any;
-    onMouseMove?: (
-        eventTarget: ImageEventTarget,
-        e: React.MouseEvent<HTMLDivElement>
-    ) => any;
-    onMouseUp?: (
-        eventTarget: ImageEventTarget,
-        e: React.MouseEvent<HTMLDivElement>
-    ) => any;
-    onMouseEnter?: (
-        eventTarget: ImageEventTarget,
-        e: React.MouseEvent<HTMLDivElement>
-    ) => any;
-    onMouseLeave?: (
-        eventTarget: ImageEventTarget,
-        e: React.MouseEvent<HTMLDivElement>
-    ) => any;
+    onMouseDown?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseMove?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseUp?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseEnter?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseLeave?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
     onClick?: (e: React.MouseEvent<HTMLDivElement>) => any;
-    onLoad: (e: React.SyntheticEvent<HTMLImageElement, Event>) => any;
-    onError: (e: React.SyntheticEvent<HTMLImageElement, Event>) => any;
+    onLoad?: () => any;
+    onError?: () => any;
 }
 
 export interface ImageState {
     error?: boolean;
     loaded?: boolean;
-
     containerWidth: number;
     containerHeight: number;
     showWidth: number;
@@ -96,95 +79,50 @@ export interface MouseOffset {
     offsetY: number;
 }
 
-class Image extends React.Component<ImageProp, ImageState> {
-    static canMove(props: ImageProp): boolean {
-        const { move } = props;
-        return typeof move === "boolean"
-            ? move
-            : typeof move === "object" && move.enable;
-    }
+class Image extends React.Component<ImageProps, ImageState> {
 
-    static canZoom(props: ImageProp): boolean {
-        const { zoom } = props;
-        return typeof zoom === "boolean"
-            ? zoom
-            : typeof zoom === "object" && zoom.enable;
-    }
+    static defaultProps = {
+        prefixCls: 'xrc',
+        radio: 0.75,
+        move: false,
+        zoom: false
+    };
 
-    static getImageSize(img: HTMLImageElement): ImageSize {
-        let imageWidth = 0,
-            imageHeight = 0;
-        if (img) {
-            imageWidth = img.width;
-            imageHeight = img.height;
-        }
-        return { imageWidth, imageHeight };
-    }
-
-    static getSize(
-        props: ImageProp,
-        { imageWidth, imageHeight }: ImageSize,
-        suit?: boolean,
-        biggerSuit?: boolean
-    ): ImageState {
-        const { width, height, radio } = props;
-        let containerWidth = 0,
-            containerHeight = 0,
-            showWidth = imageWidth,
-            showHeight = imageHeight,
-            showLeft = 0,
-            showTop = 0;
-
-        let __radio = (imageHeight && imageWidth / imageHeight) || 0;
-
-        containerWidth =
-            width || (height && height * (radio ? radio : 0.75)) || imageWidth;
-        containerHeight =
-            height || (width && width / (radio ? radio : 0.75)) || imageHeight;
-
-        let _radio = (containerHeight && containerWidth / containerHeight) || 0;
-
-        if (
-            suit ||
-            (biggerSuit &&
-                (containerWidth < imageWidth || containerHeight < imageHeight))
-        ) {
-            if (__radio > _radio) {
-                showHeight = (__radio && containerWidth / __radio) || 0;
-                showWidth = containerWidth;
-            } else {
-                showWidth = containerHeight * __radio;
-                showHeight = containerHeight;
-            }
-        }
-        showTop = (containerHeight - showHeight) / 2;
-        showLeft = (containerWidth - showWidth) / 2;
-
-        return {
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showTop,
-            showLeft
-        };
-    }
-
-    static getMouseOffset(
-        e: React.MouseEvent<HTMLDivElement> | React.WheelEvent<HTMLDivElement>
-    ): MouseOffset {
-        const mouseX = e.pageX || e.clientX;
-        const mouseY = e.pageY || e.clientY;
-        const boundingClientRect = e.currentTarget.getBoundingClientRect();
-        const offsetX =
-            mouseX -
-            boundingClientRect.left -
-            (window.pageXOffset || document.documentElement.scrollLeft);
-        const offsetY =
-            mouseY -
-            boundingClientRect.top -
-            (window.pageYOffset || document.documentElement.scrollTop);
-        return { offsetX, offsetY };
+    static propTypes = {
+        src: PropTypes.string,
+        radio: PropTypes.number,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        className: PropTypes.string,
+        children: PropTypes.object,
+        style: PropTypes.object,
+        move: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.shape({
+                enable: PropTypes.bool
+            })
+        ]),
+        zoom: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.shape({
+                enable: PropTypes.bool,
+                minWidth: PropTypes.number,
+                maxWidth: PropTypes.number,
+                minHeight: PropTypes.number,
+                maxHeight: PropTypes.number
+            })
+        ]),
+        prefixCls: PropTypes.string,
+        refs: PropTypes.func,
+        onZoomChange: PropTypes.func,
+        onMouseDown: PropTypes.func,
+        onMouseMove: PropTypes.func,
+        onMouseUp: PropTypes.func,
+        onMouseEnter: PropTypes.func,
+        onMouseLeave: PropTypes.func,
+        onClick: PropTypes.func,
+        onLoad: PropTypes.func,
+        onError: PropTypes.func
     }
 
     refs: {
@@ -218,68 +156,69 @@ class Image extends React.Component<ImageProp, ImageState> {
     private imageMouseLeave: DomEventListener | null;
     private imageMouseWheel: DomEventListener | null;
 
-    static defaultProps = {
-        prefixCls: 'xrc',
-        move: false,
-        zoom: false
-    };
-
-    constructor(props: ImageProp) {
-        super(props);
-
-        this.resetZoom();
-
-        const {
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showTop,
-            showLeft
-        } = Image.getSize(props, { imageWidth: 0, imageHeight: 0 });
-        this.state = {
-            error: false,
-            loaded: false,
-
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showTop,
-            showLeft
-        };
+    static canMove(props: ImageProps): boolean {
+        const { move } = props;
+        return typeof move === "boolean"
+            ? move
+            : typeof move === "object" && move.enable;
     }
 
-    resetImage(
-        props: ImageProp,
-        suit?: boolean,
-        biggerSuit?: boolean
-    ): ImageState {
-        let {
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showLeft,
-            showTop
-        } = Image.getSize(
-            props,
-            {
-                imageWidth: this.imageWidth,
-                imageHeight: this.imageHeight
-            },
-            suit,
-            biggerSuit
-        );
+    static canZoom(props: ImageProps): boolean {
+        const { zoom } = props;
+        return typeof zoom === "boolean"
+            ? zoom
+            : typeof zoom === "object" && zoom.enable;
+    }
+
+    static getImageSize(img: HTMLImageElement): ImageSize {
+        let imageWidth = 0,
+            imageHeight = 0;
+        if (img) {
+            imageWidth = img.width;
+            imageHeight = img.height;
+        }
+        return { imageWidth, imageHeight };
+    }
+
+    static getSize(props: ImageProps, { imageWidth, imageHeight }: ImageSize, suit?: boolean, biggerSuit?: boolean): ImageState {
+        const { width, height, radio } = props;
+        let containerWidth = 0, containerHeight = 0, showWidth = imageWidth, showHeight = imageHeight, showLeft = 0, showTop = 0;
+        containerWidth = width || (height && height * (radio || 0.75)) || imageWidth;
+        containerHeight = height || (width && width / (radio || 0.75)) || imageHeight;
+        if (suit || (biggerSuit && (containerWidth < imageWidth || containerHeight < imageHeight))) {
+            let __radio = (imageHeight && imageWidth / imageHeight) || 0;
+            let _radio = (containerHeight && containerWidth / containerHeight) || 0;
+            if (__radio > _radio) {
+                showHeight = (__radio && containerWidth / __radio) || 0;
+                showWidth = containerWidth;
+            } else {
+                showWidth = containerHeight * __radio;
+                showHeight = containerHeight;
+            }
+        }
+        showTop = (containerHeight - showHeight) / 2;
+        showLeft = (containerWidth - showWidth) / 2;
+        return { containerWidth, containerHeight, showWidth, showHeight, showTop, showLeft };
+    }
+
+    static getMouseOffset(e: React.MouseEvent<HTMLDivElement> | React.WheelEvent<HTMLDivElement>): MouseOffset {
+        const mouseX = e.pageX || e.clientX;
+        const mouseY = e.pageY || e.clientY;
+        const boundingClientRect = e.currentTarget.getBoundingClientRect();
+        const offsetX = mouseX - boundingClientRect.left - (window.pageXOffset || document.documentElement.scrollLeft);
+        const offsetY = mouseY - boundingClientRect.top - (window.pageYOffset || document.documentElement.scrollTop);
+        return { offsetX, offsetY };
+    }
+
+    resetImage(props: ImageProps, suit?: boolean, biggerSuit?: boolean): ImageState {
+        let { containerWidth, containerHeight, showWidth, showHeight, showLeft, showTop } = Image.getSize(props, { imageWidth: this.imageWidth, imageHeight: this.imageHeight }, suit, biggerSuit);
         let _left = containerWidth - showWidth,
             _top = containerHeight - showHeight;
         this.minLeft = Math.min(0, _left);
         this.maxLeft = Math.max(0, _left);
         this.minTop = Math.min(0, _top);
         this.maxTop = Math.max(0, _top);
-
-        this.props.onZoomChange &&
-            this.props.onZoomChange(showWidth / this.imageWidth);
+        this.props.onZoomChange && this.props.onZoomChange(showWidth / this.imageWidth);
         return {
             containerWidth,
             containerHeight,
@@ -309,56 +248,31 @@ class Image extends React.Component<ImageProp, ImageState> {
     zoom(step: number, offsetX: number, offsetY: number) {
         const { error } = this.state;
         if (!Image.canZoom(this.props) || error) return;
-        let {
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showLeft,
-            showTop
-        } = this.state;
+        let { containerWidth, containerHeight, showWidth, showHeight, showLeft, showTop } = this.state;
         let currentWidth = showWidth,
             currentHeight = showHeight;
         let currentZoom = showWidth / this.imageWidth;
         currentZoom = currentZoom + step;
         showWidth = this.imageWidth * currentZoom;
         showHeight = this.imageHeight * currentZoom;
-        if (
-            showWidth < this.minWidth ||
-            showWidth > this.maxWidth ||
-            showHeight < this.minHeight ||
-            showHeight > this.maxHeight
-        )
-            return;
-
+        if (showWidth < this.minWidth || showWidth > this.maxWidth || showHeight < this.minHeight || showHeight > this.maxHeight) return;
         let _left = containerWidth - showWidth,
             _top = containerHeight - showHeight;
         this.minLeft = Math.min(0, _left);
         this.maxLeft = Math.max(0, _left);
         this.minTop = Math.min(0, _top);
         this.maxTop = Math.max(0, _top);
-
-        showLeft =
-            showLeft -
-            (showWidth - currentWidth) / 2 -
-            (currentWidth / 2 - offsetX) + (showWidth / 2 - offsetX / currentWidth * showWidth);
-        showTop =
-            showTop -
-            (showHeight - currentHeight) / 2 -
-            (currentHeight / 2 - offsetY) + (showHeight / 2 - offsetY / currentHeight * showHeight);
-
+        showLeft = showLeft - (showWidth - currentWidth) / 2 - (currentWidth / 2 - offsetX) + (showWidth / 2 - offsetX / currentWidth * showWidth);
+        showTop = showTop - (showHeight - currentHeight) / 2 - (currentHeight / 2 - offsetY) + (showHeight / 2 - offsetY / currentHeight * showHeight);
         showLeft = Math.max(this.minLeft, Math.min(this.maxLeft, showLeft));
         showTop = Math.max(this.minTop, Math.min(this.maxTop, showTop));
-
         this.setState({
             showWidth,
             showHeight,
             showLeft,
             showTop
         });
-
-        this.props.onZoomChange &&
-            this.props.onZoomChange(showWidth / this.imageWidth);
+        this.props.onZoomChange && this.props.onZoomChange(showWidth / this.imageWidth);
     }
 
     zoomIn(step?: number) {
@@ -376,53 +290,22 @@ class Image extends React.Component<ImageProp, ImageState> {
     zoomSuit() {
         const { error } = this.state;
         if (!Image.canZoom(this.props) || error) return;
-        const {
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showLeft,
-            showTop
-        } = this.resetImage(this.props, true);
-        this.setState({
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showLeft,
-            showTop
-        });
+        const { containerWidth, containerHeight, showWidth, showHeight, showLeft, showTop } = this.resetImage(this.props, true);
+        this.setState({ containerWidth, containerHeight, showWidth, showHeight, showLeft, showTop });
     }
 
     zoomDefault() {
         const { error } = this.state;
         if (!Image.canZoom(this.props) || error) return;
-        const {
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showLeft,
-            showTop
-        } = this.resetImage(this.props, false);
-        this.setState({
-            containerWidth,
-            containerHeight,
-            showWidth,
-            showHeight,
-            showLeft,
-            showTop
-        });
+        const { containerWidth, containerHeight, showWidth, showHeight, showLeft, showTop } = this.resetImage(this.props, false);
+        this.setState({ containerWidth, containerHeight, showWidth, showHeight, showLeft, showTop });
     }
 
     moveLeft(step?: number) {
         if (!Image.canMove(this.props)) return;
         step = step ? Math.abs(step) : 10;
         let { showLeft } = this.state;
-        showLeft = Math.max(
-            this.minLeft,
-            Math.min(this.maxLeft, showLeft - step)
-        );
+        showLeft = Math.max(this.minLeft, Math.min(this.maxLeft, showLeft - step));
         this.setState({ showLeft });
     }
 
@@ -430,10 +313,7 @@ class Image extends React.Component<ImageProp, ImageState> {
         if (!Image.canMove(this.props)) return;
         step = step ? Math.abs(step) : 10;
         let { showLeft } = this.state;
-        showLeft = Math.max(
-            this.minLeft,
-            Math.min(this.maxLeft, showLeft + step)
-        );
+        showLeft = Math.max(this.minLeft, Math.min(this.maxLeft, showLeft + step));
         this.setState({ showLeft });
     }
 
@@ -464,85 +344,79 @@ class Image extends React.Component<ImageProp, ImageState> {
             this.originX = x;
             this.originY = y;
             let { showLeft, showTop } = this.state;
-            showLeft = Math.max(
-                this.minLeft,
-                Math.min(this.maxLeft, showLeft + stepX)
-            );
-            showTop = Math.max(
-                this.minTop,
-                Math.min(this.maxTop, showTop + stepY)
-            );
+            showLeft = Math.max(this.minLeft, Math.min(this.maxLeft, showLeft + stepX));
+            showTop = Math.max(this.minTop, Math.min(this.maxTop, showTop + stepY));
             this.setState({ showLeft, showTop });
         }
     }
 
+    constructor(props: ImageProps) {
+        super(props);
+        const { containerWidth, containerHeight, showWidth, showHeight, showTop, showLeft } = Image.getSize(props, { imageWidth: 0, imageHeight: 0 });
+        this.resetZoom();
+        this.state = {
+            error: false,
+            loaded: false,
+            containerWidth,
+            containerHeight,
+            showWidth,
+            showHeight,
+            showTop,
+            showLeft
+        };
+    }
+
     componentDidMount() {
-        this.documentMouseUp = addDomEventListener(
-            document,
-            "mouseup",
-            () => (this.moving = false)
-        );
-        this.documentMouseMove = addDomEventListener(
-            document,
-            "mousemove",
-            e => {
-                e.preventDefault();
-                const { error } = this.state;
-                if (error) return;
-                this.move(e);
-            }
-        );
+        this.documentMouseUp = addDomEventListener(document, "mouseup", () => (this.moving = false));
+        this.documentMouseMove = addDomEventListener(document, "mousemove", e => {
+            e.preventDefault();
+            const { error } = this.state;
+            if (error) return;
+            this.move(e);
+        });
 
         const { image } = this.refs;
 
-        this.imageMouseDown = addDomEventListener(
-            image,
-            "mousedown",
-            this.mouseDownHandler.bind(this)
-        );
+        this.imageMouseDown = addDomEventListener(image, "mousedown", this.mouseDownHandler.bind(this));
+        this.imageMouseMove = addDomEventListener(image, "mousemove", this.mouseMoveHandler.bind(this));
+        this.imageMouseUp = addDomEventListener(image, "mouseup", this.mouseUpHandler.bind(this));
+        this.imageMouseEnter = addDomEventListener(image, "mouseenter", this.mouseEnterHandler.bind(this));
+        this.imageMouseLeave = addDomEventListener(image, "mouseleave", this.mouseLeaveHandler.bind(this));
+        this.imageMouseWheel = addDomEventListener(image, "mousewheel", this.mouseWheelHandler.bind(this), { passive: false });
 
-        this.imageMouseMove = addDomEventListener(
-            image,
-            "mousemove",
-            this.mouseMoveHandler.bind(this)
-        );
+        this.props.refs && this.props.refs({
+            zoomIn: this.zoomIn.bind(this),
+            zoomOut: this.zoomOut.bind(this),
+            zoomSuit: this.zoomSuit.bind(this),
+            zoomDefault: this.zoomDefault.bind(this),
+            moveLeft: this.moveLeft.bind(this),
+            moveRight: this.moveRight.bind(this),
+            moveTop: this.moveTop.bind(this),
+            moveBottom: this.moveBottom.bind(this)
+        });
 
-        this.imageMouseUp = addDomEventListener(
-            image,
-            "mouseup",
-            this.mouseUpHandler.bind(this)
-        );
+        const { error } = this.state;
+        if (error) {
+            this.props.onZoomChange && this.props.onZoomChange(1);
+            this.props.onError && this.props.onError();
+        }
+    }
 
-        this.imageMouseEnter = addDomEventListener(
-            image,
-            "mouseenter",
-            this.mouseEnterHandler.bind(this)
-        );
-
-        this.imageMouseLeave = addDomEventListener(
-            image,
-            "mouseleave",
-            this.mouseLeaveHandler.bind(this)
-        );
-
-        this.imageMouseWheel = addDomEventListener(
-            image,
-            "mousewheel",
-            this.mouseWheelHandler.bind(this),
-            { passive: false }
-        );
-
-        this.props.refs &&
-            this.props.refs({
-                zoomIn: this.zoomIn.bind(this),
-                zoomOut: this.zoomOut.bind(this),
-                zoomSuit: this.zoomSuit.bind(this),
-                zoomDefault: this.zoomDefault.bind(this),
-                moveLeft: this.moveLeft.bind(this),
-                moveRight: this.moveRight.bind(this),
-                moveTop: this.moveTop.bind(this),
-                moveBottom: this.moveBottom.bind(this)
-            });
+    componentWillReceiveProps(nextProps: ImageProps) {
+        const { src, width, height } = nextProps;
+        if (src !== this.props.src) {
+            if (src) {
+                this.setState({ error: false, loaded: false });
+            } else {
+                this.setState({ error: true, loaded: false });
+                this.props.onZoomChange && this.props.onZoomChange(1);
+                this.props.onError && this.props.onError();
+            }
+        }
+        if (src === this.props.src && (width !== this.props.width || height !== this.props.height)) {
+            const { containerWidth, containerHeight, showWidth, showHeight, showTop, showLeft } = this.resetImage(nextProps, false, true);
+            this.setState({ containerWidth, containerHeight, showWidth, showHeight, showTop, showLeft });
+        }
     }
 
     componentWillUnmount() {
@@ -554,35 +428,6 @@ class Image extends React.Component<ImageProp, ImageState> {
         this.imageMouseEnter && this.imageMouseEnter.remove();
         this.imageMouseLeave && this.imageMouseLeave.remove();
         this.imageMouseWheel && this.imageMouseWheel.remove();
-    }
-
-    componentWillReceiveProps(nextProps: ImageProp) {
-        const { src, width, height } = nextProps;
-        if (src && src !== this.props.src) {
-            this.setState({ error: false, loaded: false });
-        }
-        if (
-            src === this.props.src &&
-            (width !== this.props.width || height !== this.props.height)
-        ) {
-            const {
-                containerWidth,
-                containerHeight,
-                showWidth,
-                showHeight,
-                showTop,
-                showLeft
-            } = this.resetImage(nextProps, false, true);
-
-            this.setState({
-                containerWidth,
-                containerHeight,
-                showWidth,
-                showHeight,
-                showTop,
-                showLeft
-            });
-        }
     }
 
     imageLoadHandler(e: React.SyntheticEvent<HTMLImageElement, Event>) {
@@ -607,10 +452,10 @@ class Image extends React.Component<ImageProp, ImageState> {
             showTop,
             showLeft
         });
-        this.props.onLoad && this.props.onLoad(e);
+        this.props.onLoad && this.props.onLoad();
     }
 
-    imageErrorHandler(e: React.SyntheticEvent<HTMLImageElement, Event>) {
+    imageErrorHandler(_e: React.SyntheticEvent<HTMLImageElement, Event>) {
         const {
             containerWidth,
             containerHeight,
@@ -628,7 +473,7 @@ class Image extends React.Component<ImageProp, ImageState> {
             showTop,
             showLeft
         });
-        this.props.onError && this.props.onError(e);
+        this.props.onError && this.props.onError();
     }
 
     getMouseEventTarget(e: React.MouseEvent<HTMLDivElement>): ImageEventTarget {

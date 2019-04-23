@@ -2,7 +2,7 @@ export interface DomEventListener {
     remove: () => void;
 }
 
-function addDomEventListener(
+export default function addDomEventListener(
     target: HTMLElement | Document,
     eventType: string,
     callback: (e: React.MouseEvent<any> | React.WheelEvent<any>) => any,
@@ -29,5 +29,3 @@ function addDomEventListener(
     }
     return null;
 }
-
-export default addDomEventListener;

@@ -36,8 +36,8 @@ import { Image } from "x-react-component";
 | onMouseEnter | 鼠标移进图片区域回调事件 | `function(eventTarget, e)` |        |
 | onMouseLeave | 鼠标移出图片区域回调事件 | `function(eventTarget, e)` |        |
 | onClick      |     鼠标点击回调事件     |              `function(e)` |        |
-| onLoad       |  图片加载完成时回调事件  |              `function(e)` |        |
-| onError      |  图片加载失败时回调事件  |              `function(e)` |        |
+| onLoad       |  图片加载完成时回调事件  |              `function()` |        |
+| onError      |  图片加载失败时回调事件  |              `function()` |        |
 
 注意，设置设置`style`的`width`和`height`是无效的，当不设置`width`和`height`是，按照原图大小显示。
 当设置其中之一时，按照宽高比 `3 : 4` 计算位置边的大小
