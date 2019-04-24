@@ -600,6 +600,7 @@ export default class Image extends React.Component<ImageProps, ImageState> {
                 onClick={this.onClickHandler.bind(this)}
             >
                 <div
+                    className={`${prefixCls}-image-inner`}
                     style={{
                         position: "absolute",
                         width: showWidth,
@@ -611,6 +612,7 @@ export default class Image extends React.Component<ImageProps, ImageState> {
                 >
                     {!error && (
                         <img
+                            className={`${prefixCls}-image-img`}
                             style={
                                 loaded
                                     ? {
@@ -630,6 +632,7 @@ export default class Image extends React.Component<ImageProps, ImageState> {
                         />
                     )}
                     <div
+                        className={`${prefixCls}-image-children`}
                         style={{
                             position: "absolute",
                             top: 0,

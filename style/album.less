@@ -1,6 +1,8 @@
 @import './image.less';
 
-.xrc-album {
+@prefixCls: 'xrc-album';
+
+.@{prefixCls} {
     &:after {
         display: block;
         content: "";
@@ -10,7 +12,13 @@
         clear: both;
     }
 
-    .xrc-album-preview {
+    .@{prefixCls}-button {
+        background: transparent;
+        border: none;
+        color: #333;
+    }
+
+    .@{prefixCls}-preview {
         text-align: center;
 
         &:before {
@@ -26,7 +34,7 @@
             vertical-align: middle;
         }
 
-        .preview-image {
+        .@{prefixCls}-image {
             background-color: #f6f6f6;
             display: inline-block;
             vertical-align: middle;
@@ -34,7 +42,7 @@
         }
     }
 
-    .xrc-album-control {
+    .@{prefixCls}-control {
         margin-top: 10px;
         text-align: center;
         background-color: #f6f6f6;
@@ -48,6 +56,10 @@
             display: inline-block;
             vertical-align: top;
 
+            &+div {
+                margin-left: 30px;
+            }
+
             button,
             span {
 
@@ -57,12 +69,8 @@
                 }
             }
 
-            &+div {
-                margin-left: 30px;
-            }
-
-            &.xrc-album-control-zoom {
-                span {
+            &.@{prefixCls}-control-zoom {
+                .@{prefixCls}-album-zoompercent {
                     display: inline-block;
                     width: 40px;
                 }
@@ -70,7 +78,7 @@
         }
     }
 
-    .xrc-album-imagelist {
+    .@{prefixCls}-imagelist {
         margin-top: 10px;
         position: relative;
         text-align: center;
@@ -88,7 +96,7 @@
             vertical-align: middle;
         }
 
-        .imagelist-overflow {
+        .@{prefixCls}-imagelist-overflow {
             display: inline-block;
             vertical-align: middle;
             position: relative;
@@ -107,16 +115,15 @@
                     float: left;
                     border: 1px solid #e6e6e6;
                     cursor: pointer;
-                    
+
                     &:hover,
                     &.current {
                         border-color: #2080f7;
                     }
 
-                    .imagelist-image {
+                    .xrc-image {
                         background-color: #f6f6f6;
                     }
-
                 }
             }
         }

@@ -51,6 +51,7 @@ export interface AlbumProps {
     onImageChange?: (image: any) => any;
     onLoad?: () => any;
     onError?: () => any;
+    refs?: (preview: ImageRefs) => any;
 }
 
 export interface DefaultAlbumProps {
@@ -277,24 +278,24 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                     <div className={`${prefixCls}-album-preview`} style={{ height: preview.height + 2 }}>
                         <button
                             disabled={current === 0}
-                            className="image-prev"
+                            className={`${prefixCls}-album-button ${prefixCls}-album-button-imageprev`}
                             onClick={this.onPrevImage.bind(this)}>{locale.imagePrev}</button>
                         <Image
                             prefixCls={prefixCls}
-                            className="preview-image"
+                            className={`${prefixCls}-album-image`}
                             zoom={true}
                             move={true}
                             src={showImages[current]}
                             height={preview.height}
                             width={preview.width}
                             onZoomChange={(zoom: number) => this.setState({ zoom })}
-                            refs={(preview: ImageRefs) => this.preview = preview}
+                            refs={(preview: ImageRefs) => { this.preview = preview; this.props.refs && this.props.refs(preview) }}
                             onError={this.props.onError}
                             onLoad={this.props.onLoad}
                         />
                         <button
                             disabled={current === showImages.length - 1}
-                            className="image-next"
+                            className={`${prefixCls}-album-button ${prefixCls}-album-button-imagenext`}
                             onClick={this.onNextImage.bind(this)}>{locale.imageNext}</button>
                     </div>
                 }
@@ -303,33 +304,33 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                     <div className={`${prefixCls}-album-control`}>
                         {
                             control.zoom &&
-                            <div className={`${prefixCls}-control-zoom`}>
-                                <button className="control-zoomin" onClick={e => { e.preventDefault(); this.preview && this.preview.zoomIn(); }}>{locale.zoomIn}</button>
-                                <span>{Math.round(zoom * 100)}%</span>
-                                <button className="control-zoomout" onClick={e => { e.preventDefault(); this.preview && this.preview.zoomOut(); }}>{locale.zoomOut}</button>
-                                <button className="control-zoomsuit" onClick={e => { e.preventDefault(); this.preview && this.preview.zoomSuit(); }}>{locale.zoomSuit}</button>
-                                <button className="control-zoomdefault" onClick={e => { e.preventDefault(); this.preview && this.preview.zoomDefault(); }}>{locale.zoomDefault}</button>
+                            <div className={`${prefixCls}-album-control-zoom`}>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomin`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomIn(); }}>{locale.zoomIn}</button>
+                                <span className={`${prefixCls}-album-zoompercent`}>{Math.round(zoom * 100)}%</span>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomout`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomOut(); }}>{locale.zoomOut}</button>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomsuit`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomSuit(); }}>{locale.zoomSuit}</button>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomdefault`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomDefault(); }}>{locale.zoomDefault}</button>
                             </div>
                         }
                         {
                             control.move &&
-                            <div className={`${prefixCls}-control-move`}>
-                                <button className="control-moveleft" onClick={e => { e.preventDefault(); this.preview && this.preview.moveLeft(); }}>{locale.moveLeft}</button>
-                                <button className="control-moveright" onClick={e => { e.preventDefault(); this.preview && this.preview.moveRight(); }}>{locale.moveRight}</button>
-                                <button className="control-movetop" onClick={e => { e.preventDefault(); this.preview && this.preview.moveTop(); }}>{locale.moveTop}</button>
-                                <button className="control-movebottom" onClick={e => { e.preventDefault(); this.preview && this.preview.moveBottom(); }}>{locale.moveBottom}</button>
+                            <div className={`${prefixCls}-album-control-move`}>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-moveleft`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveLeft(); }}>{locale.moveLeft}</button>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-moveright`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveRight(); }}>{locale.moveRight}</button>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-movetop`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveTop(); }}>{locale.moveTop}</button>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-movebottom`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveBottom(); }}>{locale.moveBottom}</button>
                             </div>
                         }
                         {
                             control.download &&
-                            <div className={`${prefixCls}-control-download`}>
-                                <button className="control-download" onClick={e => { e.preventDefault(); this.preview && this.preview.download(); }}>{locale.download}</button>
+                            <div className={`${prefixCls}-album-control-download`}>
+                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-download"`} onClick={e => { e.preventDefault(); this.preview && this.preview.download(); }}>{locale.download}</button>
                             </div>
                         }
                         {
                             control.info &&
-                            <div className={`${prefixCls}-control-info`}>
-                                当前第 {current + 1} 张 / 共 {showImages.length} 张
+                            <div className={`${prefixCls}-album-control-info`}>
+                                当前第 <span className={`${prefixCls}-album-current`}>{current + 1}</span> 张 / 共 <span className={`${prefixCls}-album-total`}>{showImages.length}</span> 张
                             </div>
                         }
                     </div>
@@ -337,12 +338,12 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                 <div className={`${prefixCls}-album-imagelist`} style={{ height: images.height + 2 }}>
                     <button
                         disabled={left === 0}
-                        className="page-prev"
+                        className={`${prefixCls}-album-button ${prefixCls}-album-button-pageprev`}
                         onClick={this.onPrevPage.bind(this)}>{locale.pagePrev}</button>
                     {
                         images &&
                         <div
-                            className="imagelist-overflow"
+                            className={`${prefixCls}-album-imagelist-overflow`}
                             style={{ width: images.showLength * (images.width + 2 + images.interval) - images.interval }}>
                             <ul style={{
                                 width: (images.width + 2 + images.interval) * showImages.length - images.interval,
@@ -360,7 +361,7 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                                             })}>
                                             <Image
                                                 prefixCls={prefixCls}
-                                                className="imagelist-image"
+                                                className={`${prefixCls}-album-image`}
                                                 src={image}
                                                 width={images.width}
                                                 height={images.height}
@@ -372,7 +373,7 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                     }
                     <button
                         disabled={left === this.minLeft}
-                        className="page-next"
+                        className={`${prefixCls}-album-button ${prefixCls}-album-button-pagenext`}
                         onClick={this.onNextPage.bind(this)}>{locale.pageNext}</button>
                 </div>
             </div>
