@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
-import addDomEventListener, { DomEventListener } from "../utils/addDomEventListener";
+import addDomEventListener, { DomEvent } from "../utils/addDomEventListener";
 
 export interface ImageMoveProps {
     enable: boolean;
@@ -9,10 +9,10 @@ export interface ImageMoveProps {
 
 export interface ImageZoomProps {
     enable: boolean;
-    minWidth?: number;
-    maxWidth?: number;
-    minHeight?: number;
-    maxHeight?: number;
+    minWidth: number;
+    maxWidth: number;
+    minHeight: number;
+    maxHeight: number;
 }
 
 export interface ImageRefs {
@@ -24,6 +24,7 @@ export interface ImageRefs {
     moveBottom: (step?: number) => any;
     moveLeft: (step?: number) => any;
     moveRight: (step?: number) => any;
+    download: () => any;
 }
 
 export interface ImageEventTarget {
@@ -37,23 +38,24 @@ export interface ImageEventTarget {
 }
 
 export interface ImageProps {
-    src: string;
+    src?: string;
     radio?: number;
     width?: number;
     height?: number;
+    prefixCls?: string;
     className?: string;
     style?: React.CSSProperties;
-    move?: boolean | ImageMoveProps;
-    zoom?: boolean | ImageZoomProps;
-    prefixCls?: string;
-    refs?: (image: ImageRefs) => any;
-    onZoomChange?: (zoom: number) => any;
-    onMouseDown?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
-    onMouseMove?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
-    onMouseUp?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
-    onMouseEnter?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
-    onMouseLeave?: (eventTarget: ImageEventTarget, e: React.MouseEvent<HTMLDivElement>) => any;
-    onClick?: (e: React.MouseEvent<HTMLDivElement>) => any;
+    children?: React.ReactNode;
+    move?: boolean | Partial<ImageMoveProps>;
+    zoom?: boolean | Partial<ImageZoomProps>;
+    refs?: (image?: ImageRefs) => any;
+    onZoomChange?: (zoom?: number) => any;
+    onMouseDown?: (eventTarget?: ImageEventTarget, e?: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseMove?: (eventTarget?: ImageEventTarget, e?: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseUp?: (eventTarget?: ImageEventTarget, e?: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseEnter?: (eventTarget?: ImageEventTarget, e?: React.MouseEvent<HTMLDivElement>) => any;
+    onMouseLeave?: (eventTarget?: ImageEventTarget, e?: React.MouseEvent<HTMLDivElement>) => any;
+    onClick?: (e?: React.MouseEvent<HTMLDivElement>) => any;
     onLoad?: () => any;
     onError?: () => any;
 }
@@ -79,7 +81,7 @@ export interface MouseOffset {
     offsetY: number;
 }
 
-class Image extends React.Component<ImageProps, ImageState> {
+export default class Image extends React.Component<ImageProps, ImageState> {
 
     static defaultProps = {
         prefixCls: 'xrc',
@@ -93,9 +95,10 @@ class Image extends React.Component<ImageProps, ImageState> {
         radio: PropTypes.number,
         width: PropTypes.number,
         height: PropTypes.number,
+        prefixCls: PropTypes.string,
         className: PropTypes.string,
-        children: PropTypes.object,
         style: PropTypes.object,
+        children: PropTypes.any,
         move: PropTypes.oneOfType([
             PropTypes.bool,
             PropTypes.shape({
@@ -112,7 +115,6 @@ class Image extends React.Component<ImageProps, ImageState> {
                 maxHeight: PropTypes.number
             })
         ]),
-        prefixCls: PropTypes.string,
         refs: PropTypes.func,
         onZoomChange: PropTypes.func,
         onMouseDown: PropTypes.func,
@@ -147,27 +149,27 @@ class Image extends React.Component<ImageProps, ImageState> {
 
     private moving: boolean = false;
 
-    private documentMouseUp: DomEventListener | null;
-    private documentMouseMove: DomEventListener | null;
-    private imageMouseDown: DomEventListener | null;
-    private imageMouseMove: DomEventListener | null;
-    private imageMouseUp: DomEventListener | null;
-    private imageMouseEnter: DomEventListener | null;
-    private imageMouseLeave: DomEventListener | null;
-    private imageMouseWheel: DomEventListener | null;
+    private documentMouseUp: DomEvent;
+    private documentMouseMove: DomEvent;
+    private imageMouseDown: DomEvent;
+    private imageMouseMove: DomEvent;
+    private imageMouseUp: DomEvent;
+    private imageMouseEnter: DomEvent;
+    private imageMouseLeave: DomEvent;
+    private imageMouseWheel: DomEvent;
 
     static canMove(props: ImageProps): boolean {
         const { move } = props;
-        return typeof move === "boolean"
-            ? move
-            : typeof move === "object" && move.enable;
+        return typeof move === "undefined" ? false :
+            typeof move === "boolean" ? move :
+                typeof move.enable !== "undefined" ? move.enable : true;
     }
 
     static canZoom(props: ImageProps): boolean {
         const { zoom } = props;
-        return typeof zoom === "boolean"
-            ? zoom
-            : typeof zoom === "object" && zoom.enable;
+        return typeof zoom === "undefined" ? false :
+            typeof zoom === "boolean" ? zoom :
+                typeof zoom.enable !== "undefined" ? zoom.enable : true;
     }
 
     static getImageSize(img: HTMLImageElement): ImageSize {
@@ -333,7 +335,7 @@ class Image extends React.Component<ImageProps, ImageState> {
         this.setState({ showTop });
     }
 
-    move(e: React.MouseEvent<HTMLElement> | MouseEvent) {
+    move<T extends HTMLElement | Document>(e: React.MouseEvent<T>) {
         if (!Image.canMove(this.props)) return;
         if (this.moving) {
             const x = e.pageX || e.clientX;
@@ -347,6 +349,19 @@ class Image extends React.Component<ImageProps, ImageState> {
             showLeft = Math.max(this.minLeft, Math.min(this.maxLeft, showLeft + stepX));
             showTop = Math.max(this.minTop, Math.min(this.maxTop, showTop + stepY));
             this.setState({ showLeft, showTop });
+        }
+    }
+
+    download() {
+        const { src } = this.props;
+        const { error } = this.state;
+        if (src && !error) {
+            let a = document.createElement('a');
+            a.href = src; //图片地址
+            a.download = new Date().getTime() + ""; //图片名及格式
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         }
     }
 
@@ -382,7 +397,7 @@ class Image extends React.Component<ImageProps, ImageState> {
         this.imageMouseUp = addDomEventListener(image, "mouseup", this.mouseUpHandler.bind(this));
         this.imageMouseEnter = addDomEventListener(image, "mouseenter", this.mouseEnterHandler.bind(this));
         this.imageMouseLeave = addDomEventListener(image, "mouseleave", this.mouseLeaveHandler.bind(this));
-        this.imageMouseWheel = addDomEventListener(image, "mousewheel", this.mouseWheelHandler.bind(this), { passive: false });
+        this.imageMouseWheel = addDomEventListener(image, "wheel", this.mouseWheelHandler.bind(this), { passive: false });
 
         this.props.refs && this.props.refs({
             zoomIn: this.zoomIn.bind(this),
@@ -392,7 +407,8 @@ class Image extends React.Component<ImageProps, ImageState> {
             moveLeft: this.moveLeft.bind(this),
             moveRight: this.moveRight.bind(this),
             moveTop: this.moveTop.bind(this),
-            moveBottom: this.moveBottom.bind(this)
+            moveBottom: this.moveBottom.bind(this),
+            download: this.download.bind(this)
         });
 
         const { error } = this.state;
@@ -630,5 +646,3 @@ class Image extends React.Component<ImageProps, ImageState> {
         );
     }
 }
-
-export default Image;

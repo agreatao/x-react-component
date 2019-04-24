@@ -1,7 +1,5 @@
-import Image from './components/image'; 
+export { ImageProps } from './components/image';
+export { AlbumProps } from './components/album';
 
-export { ImageProps } from './components/image'; 
-
-export {
-    Image
-}
+export { default as Image } from './components/image';
+export { default as Ablum } from './components/album';

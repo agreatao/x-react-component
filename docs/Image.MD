@@ -18,26 +18,26 @@ import { Image } from "x-react-component";
 
 图片组件属性如下：
 
-| 属性         |           说明           |                       类型 | 默认值 |
-| ------------ | :----------------------: | -------------------------: | -----: |
-| src          |         图片文件         |                   `string` |        |
-| radio        |   宽高比（宽度/高度）    |                   `number` |        |
-| width        |         容器宽度         |                   `number` |        |
-| height       |         容器高度         |                   `number` |        |
-| className    |           类名           |                   `string` |        |
-| style        |     样式（css 样式）     |                   `object` |        |
-| zoom         |        是否可缩放        |         ```boolean | object``` |  false |
-| move         |      是否可拖拽移动      |         ````boolean | object``` |  false |
-| refs         |       图片容器实例       |          `function(image)` |        |
-| onZoomChange | 鼠标缩放时触发的回调时间 |           `function(zoom)` |        |
-| onMouseDown  |  图片鼠标按下时回调事件  | `function(eventTarget, e)` |        |
-| onMouseMove  |  图片鼠标移动时回调事件  | `function(eventTarget, e)` |        |
-| onMouseUp    |  图片鼠标松开时回调事件  | `function(eventTarget, e)` |        |
-| onMouseEnter | 鼠标移进图片区域回调事件 | `function(eventTarget, e)` |        |
-| onMouseLeave | 鼠标移出图片区域回调事件 | `function(eventTarget, e)` |        |
-| onClick      |     鼠标点击回调事件     |              `function(e)` |        |
-| onLoad       |  图片加载完成时回调事件  |              `function()` |        |
-| onError      |  图片加载失败时回调事件  |              `function()` |        |
+| 属性         |           说明           |                       类型 |    默认值 |
+| ------------ | :----------------------: | -------------------------: | --------: |
+| src          |         图片文件         |                   `string` |           |
+| radio        |   宽高比（宽度/高度）    |                   `number` |           |
+| width        |         容器宽度         |                   `number` |           |
+| height       |         容器高度         |                   `number` |           |
+| className    |           类名           |                   `string` |           |
+| style        |     样式（css 样式）     |                   `object` |           |
+| zoom         |        是否可缩放        |     ```boolean | object``` |     false |
+| move         |      是否可拖拽移动      |                ````boolean | object``` | false |
+| refs         |       图片容器实例       |          `function(image)` |           |
+| onZoomChange | 鼠标缩放时触发的回调时间 |           `function(zoom)` |           |
+| onMouseDown  |  图片鼠标按下时回调事件  | `function(eventTarget, e)` |           |
+| onMouseMove  |  图片鼠标移动时回调事件  | `function(eventTarget, e)` |           |
+| onMouseUp    |  图片鼠标松开时回调事件  | `function(eventTarget, e)` |           |
+| onMouseEnter | 鼠标移进图片区域回调事件 | `function(eventTarget, e)` |           |
+| onMouseLeave | 鼠标移出图片区域回调事件 | `function(eventTarget, e)` |           |
+| onClick      |     鼠标点击回调事件     |              `function(e)` |           |
+| onLoad       |  图片加载完成时回调事件  |               `function()` |           |
+| onError      |  图片加载失败时回调事件  |               `function()` |           |
 
 注意，设置设置`style`的`width`和`height`是无效的，当不设置`width`和`height`是，按照原图大小显示。
 当设置其中之一时，按照宽高比 `3 : 4` 计算位置边的大小
@@ -98,5 +98,6 @@ import { Image } from "x-react-component";
 | moveBottom  |                            下移                             | `function(step?)` |
 | moveLeft    |                            左移                             | `function(step?)` |
 | moveRight   |                            右移                             | `function(step?)` |
+| download    |                          下载图片                           |      `function()` |
 
 `step` 为放大倍数，默认`0.1`

@@ -1,14 +1,18 @@
-export interface DomEventListener {
-    remove: () => void;
-}
+import { EventMap } from '../types/eventTypes';
 
-export default function addDomEventListener(
-    target: HTMLElement | Document,
-    eventType: string,
-    callback: (e: React.MouseEvent<any> | React.WheelEvent<any>) => any,
-    option?: boolean | any
-): DomEventListener | null {
-    function eventCallback(e: MouseEvent | WheelEvent) {
+export type DomEvent = { remove: () => void; } | null;
+export type DomEventOption = { capture?: boolean; once?: boolean; passive?: boolean; } | boolean;
+
+export default function addDomEventListener
+    <T extends HTMLElement | Document, ET extends keyof EventMap<T>>
+    (
+        target: T,
+        eventType: ET,
+        callback: (e: EventMap<T>[ET]) => any,
+        option?: DomEventOption
+    ): DomEvent {
+
+    function eventCallback(e: any) {
         callback && callback.call(target, e);
     }
 
