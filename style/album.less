@@ -1,8 +1,8 @@
 @import './image.less';
 
-@prefixCls: 'xrc-album';
+@albumPrefix: xrc-album;
 
-.@{prefixCls} {
+.@{albumPrefix} {
     &:after {
         display: block;
         content: "";
@@ -12,13 +12,18 @@
         clear: both;
     }
 
-    .@{prefixCls}-button {
+    .@{albumPrefix}-button {
         background: transparent;
         border: none;
         color: #333;
+        outline: none;
+
+        &:disabled {
+            color: #7b7b7b;
+        }
     }
 
-    .@{prefixCls}-preview {
+    .@{albumPrefix}-preview {
         text-align: center;
 
         &:before {
@@ -34,7 +39,7 @@
             vertical-align: middle;
         }
 
-        .@{prefixCls}-image {
+        .@{albumPrefix}-image {
             background-color: #f6f6f6;
             display: inline-block;
             vertical-align: middle;
@@ -42,7 +47,7 @@
         }
     }
 
-    .@{prefixCls}-control {
+    .@{albumPrefix}-control {
         margin-top: 10px;
         text-align: center;
         background-color: #f6f6f6;
@@ -69,8 +74,8 @@
                 }
             }
 
-            &.@{prefixCls}-control-zoom {
-                .@{prefixCls}-album-zoompercent {
+            &.@{albumPrefix}-control-zoom {
+                .@{albumPrefix}-album-zoompercent {
                     display: inline-block;
                     width: 40px;
                 }
@@ -78,7 +83,7 @@
         }
     }
 
-    .@{prefixCls}-imagelist {
+    .@{albumPrefix}-imagelist {
         margin-top: 10px;
         position: relative;
         text-align: center;
@@ -96,7 +101,7 @@
             vertical-align: middle;
         }
 
-        .@{prefixCls}-imagelist-overflow {
+        .@{albumPrefix}-imagelist-overflow {
             display: inline-block;
             vertical-align: middle;
             position: relative;
@@ -121,7 +126,7 @@
                         border-color: #2080f7;
                     }
 
-                    .xrc-image {
+                    .@{albumPrefix}-image {
                         background-color: #f6f6f6;
                     }
                 }

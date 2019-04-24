@@ -54,14 +54,6 @@ export interface AlbumProps {
     refs?: (preview: ImageRefs) => any;
 }
 
-export interface DefaultAlbumProps {
-    prefixCls: string;
-    preview: PreviewProps;
-    control: ControlProps;
-    images: ImagesProps;
-    locale: LocaleProps;
-}
-
 export interface AlbumState {
     current: number;
     left: number;
@@ -69,7 +61,7 @@ export interface AlbumState {
 }
 
 export default class Album extends React.Component<AlbumProps, AlbumState> {
-    static defaultProps: DefaultAlbumProps = {
+    static defaultProps = {
         prefixCls: 'xrc',
         preview: {
             enable: true,
@@ -301,39 +293,39 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                 }
                 {
                     ((preview.enable && (control.zoom || control.move)) || control.download || control.info) &&
-                    <div className={`${prefixCls}-album-control`}>
-                        {
-                            control.zoom &&
-                            <div className={`${prefixCls}-album-control-zoom`}>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomin`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomIn(); }}>{locale.zoomIn}</button>
-                                <span className={`${prefixCls}-album-zoompercent`}>{Math.round(zoom * 100)}%</span>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomout`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomOut(); }}>{locale.zoomOut}</button>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomsuit`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomSuit(); }}>{locale.zoomSuit}</button>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomdefault`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomDefault(); }}>{locale.zoomDefault}</button>
+                        <div className={`${prefixCls}-album-control`}>
+                            {
+                                control.zoom &&
+                                <div className={`${prefixCls}-album-control-zoom`}>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomin`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomIn(); }}>{locale.zoomIn}</button>
+                                    <span className={`${prefixCls}-album-zoompercent`}>{Math.round(zoom * 100)}%</span>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomout`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomOut(); }}>{locale.zoomOut}</button>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomsuit`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomSuit(); }}>{locale.zoomSuit}</button>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-zoomdefault`} onClick={e => { e.preventDefault(); this.preview && this.preview.zoomDefault(); }}>{locale.zoomDefault}</button>
+                                </div>
+                            }
+                            {
+                                control.move &&
+                                <div className={`${prefixCls}-album-control-move`}>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-moveleft`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveLeft(); }}>{locale.moveLeft}</button>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-moveright`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveRight(); }}>{locale.moveRight}</button>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-movetop`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveTop(); }}>{locale.moveTop}</button>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-movebottom`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveBottom(); }}>{locale.moveBottom}</button>
+                                </div>
+                            }
+                            {
+                                control.download &&
+                                <div className={`${prefixCls}-album-control-download`}>
+                                    <button className={`${prefixCls}-album-button ${prefixCls}-album-button-download"`} onClick={e => { e.preventDefault(); this.preview && this.preview.download(); }}>{locale.download}</button>
+                                </div>
+                            }
+                            {
+                                control.info &&
+                                <div className={`${prefixCls}-album-control-info`}>
+                                    当前第 <span className={`${prefixCls}-album-current`}>{current + 1}</span> 张 / 共 <span className={`${prefixCls}-album-total`}>{showImages.length}</span> 张
                             </div>
-                        }
-                        {
-                            control.move &&
-                            <div className={`${prefixCls}-album-control-move`}>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-moveleft`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveLeft(); }}>{locale.moveLeft}</button>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-moveright`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveRight(); }}>{locale.moveRight}</button>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-movetop`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveTop(); }}>{locale.moveTop}</button>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-movebottom`} onClick={e => { e.preventDefault(); this.preview && this.preview.moveBottom(); }}>{locale.moveBottom}</button>
-                            </div>
-                        }
-                        {
-                            control.download &&
-                            <div className={`${prefixCls}-album-control-download`}>
-                                <button className={`${prefixCls}-album-button ${prefixCls}-album-button-download"`} onClick={e => { e.preventDefault(); this.preview && this.preview.download(); }}>{locale.download}</button>
-                            </div>
-                        }
-                        {
-                            control.info &&
-                            <div className={`${prefixCls}-album-control-info`}>
-                                当前第 <span className={`${prefixCls}-album-current`}>{current + 1}</span> 张 / 共 <span className={`${prefixCls}-album-total`}>{showImages.length}</span> 张
-                            </div>
-                        }
-                    </div>
+                            }
+                        </div>
                 }
                 <div className={`${prefixCls}-album-imagelist`} style={{ height: images.height + 2 }}>
                     <button
