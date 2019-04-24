@@ -293,7 +293,7 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                             onLoad={this.props.onLoad}
                         />
                         <button
-                            disabled={current === showImages.length}
+                            disabled={current === showImages.length - 1}
                             className="image-next"
                             onClick={this.onNextImage.bind(this)}>{locale.imageNext}</button>
                     </div>
@@ -336,6 +336,7 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                 }
                 <div className={`${prefixCls}-album-imagelist`} style={{ height: images.height + 2 }}>
                     <button
+                        disabled={left === 0}
                         className="page-prev"
                         onClick={this.onPrevPage.bind(this)}>{locale.pagePrev}</button>
                     {
@@ -370,6 +371,7 @@ export default class Album extends React.Component<AlbumProps, AlbumState> {
                         </div>
                     }
                     <button
+                        disabled={left === this.minLeft}
                         className="page-next"
                         onClick={this.onNextPage.bind(this)}>{locale.pageNext}</button>
                 </div>
